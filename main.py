@@ -2,11 +2,13 @@ import cv2
 
 from utility import *
 from imports import *
-from preprocess import *
 from dataloader import *
 
-imagePath = "antrenare/3_20.jpg"
+# imagePath = "antrenare/3_20.jpg"
 # imagePath = "emptyBoard.jpg"
+# imagePath = "decupari/1_20.jpg"
+imagePath = "linii/1_19.jpg"
+# imagePath = "imagini_auxiliare/01.jpg"
 
 def find_color_values_using_trackbar(frame):
     frame_hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
@@ -49,16 +51,39 @@ def find_color_values_using_trackbar(frame):
     cv.destroyAllWindows()
 
 board = cv.imread(imagePath)
-# board = Preprocessing(board).extractGameBoard()
-# cv2.imwrite("emptyBoard.jpg", board)
+# board, patrat = Preprocessing(board).extractGameBoard()
+# find_color_values_using_trackbar(board)
+# cv2.imwrite("emptyBoard.jpg", patrat)
 
 # find_color_values_using_trackbar(board)
 # showImage(board)
 dataset = DataLoader().games
 
 for i in range(5):
-    for j in range(20):
-        board = Preprocessing(dataset[i][j]).extractGameBoard()
-        cv.imwrite(f"decupari/{i + 1}_{str(j + 1).zfill(2)}.jpg", board)
+    for j in range(1,21):
+        cv.imwrite(f"decupari/{i + 1}_{str(j).zfill(2)}.jpg", dataset[i][j])
 
-        h, w, ch = board.shape
+        d1 = cv.inRange(cv.cvtColor(dataset[i][j], cv.COLOR_BGR2HSV), np.array([50, 0, 215]), np.array([255, 255, 255]))
+        d2 = cv.inRange(cv.cvtColor(dataset[i][j-1], cv.COLOR_BGR2HSV), np.array([50, 0, 215]), np.array([255, 255, 255]))
+
+        diff = d1 - d2
+
+        kernel = np.ones((3, 3), np.uint8)
+        diff = cv.erode(diff, kernel, iterations=2)
+        kernel = np.ones((2, 2), np.uint8)
+        diff = cv.erode(diff, kernel, iterations=2)
+
+
+        kernel = np.ones((15, 15), np.uint8)
+        diff = cv.dilate(diff, kernel, iterations=3)
+
+        kernel = np.ones((15, 15), np.uint8)
+        diff = cv.erode(diff, kernel, iterations=2)
+
+        contours, hierarchy = cv.findContours(diff, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+
+        boundRect = cv.boundingRect(contours[0])
+        # daaa = cv.drawContours(dataset[i][j], contours,  -1, (0, 0, 255), 3)
+        daaa = cv.rectangle(dataset[i][j], (int(boundRect[0]), int(boundRect[1])), (int(boundRect[0]+boundRect[2]), int(boundRect[1]+boundRect[3])), (0, 0, 255), 2)
+        cv.imwrite(f"diferente/{i + 1}_{str(j).zfill(2)}.jpg", daaa)
+
