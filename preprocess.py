@@ -104,10 +104,10 @@ class Preprocessing:
         up += h // 2
         down += h // 2
 
-        left = int(left)
-        right = int(right)
-        up = int(up)
-        down = int(down)
+        left = int(left) - 15
+        right = int(right) + 15
+        up = int(up) - 15
+        down = int(down) + 15
 
         # imgCopy = cv.line(imgCopy, (left, 0), (left, 2000), (0, 0, 255), 3)
         # imgCopy = cv.line(imgCopy, (right, 0), (right, 2000), (0, 0, 255), 3)
@@ -116,11 +116,11 @@ class Preprocessing:
 
 
         srcPoints = np.float32([[left, up], [right, up], [right, down], [left, down]])
-        dstPoints = np.float32([[0, 0], [1000, 0], [1000, 1000], [0, 1000]])
+        dstPoints = np.float32([[0, 0], [1005, 0], [1005, 1005], [0, 1005]])
 
         M = cv.getPerspectiveTransform(srcPoints, dstPoints)
 
-        imgCopy = cv.warpPerspective(imgCopy, M, (1000, 1000))
+        imgCopy = cv.warpPerspective(imgCopy, M, (1005, 1005))
         # cercuri = cv.inRange(cv.cvtColor(imgCopy, cv.COLOR_BGR2HSV), np.array([0, 0, 220]), np.array([255, 255, 255]))
         #
         # circles = cv.HoughCircles(cercuri, cv.HOUGH_GRADIENT, 1, 1, param1=40, param2=15, minRadius=0, maxRadius=30)
