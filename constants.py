@@ -1,4 +1,7 @@
 ROUNDS = 20
 trainPath = "antrenare"
 emptyBoardPath = "emptyBoard.jpg"
-targetSize = (2396, 2362)
+BORDER = 15
+ROWS = 15
+COLUMNS = 15
+TEST_PATH = "antrenare"

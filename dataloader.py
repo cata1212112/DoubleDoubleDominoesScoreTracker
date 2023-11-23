@@ -1,19 +1,23 @@
-from imports import *
-from constants import *
 from preprocess import *
+from utility import *
+
 
 class DataLoader:
-    def __init__(self, path=trainPath, numGames = 5):
-        self.numGames = numGames
+    def __init__(self, path=TEST_PATH, num_games=5):
+        self.numGames = num_games
         self.games = []
         self.emptyBoard = cv.imread(emptyBoardPath)
+        self.gameMoves = []
 
-        for i in range(1, self.numGames + 1):
-            currentGame = [self.emptyBoard]
-            for j in range(1, ROUNDS + 1):
-                image = cv.imread(os.path.join(path, f"{i}_{str(j).zfill(2)}.jpg"))
-                board, lines = Preprocessing(image).extractGameBoard()
-                cv.imwrite(f"linii/{i}_{str(j).zfill(2)}.jpg", lines)
-                currentGame.append(lines)
+        for i in range(0, self.numGames):
+            current_game = [self.emptyBoard]
+            self.gameMoves.append(parse_moves_file(os.path.join(path, f"{i + 1}_mutari.txt")))
+            for j in range(0, ROUNDS):
+                image = cv.imread(os.path.join(path, f"{i + 1}_{str(j + 1).zfill(2)}.jpg"))
+                game = Preprocessing(image).extract_game()
+                current_game.append(game)
 
-            self.games.append(currentGame)
+            self.games.append(current_game)
+
+    def __getitem__(self, item):
+        return self.games[item], self.gameMoves[item]
