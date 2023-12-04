@@ -36,8 +36,8 @@ class Game:
         self.index = index
 
     def play(self):
-        for j in range(1, 21):
-            first_pos, second_pos, one, two = Move(self.images[j - 1], self.images[j]).get_move()
+        for j in tqdm(range(1, 21), desc=f"Playing round {self.index}"):
+            first_pos, second_pos, one, two = Move(self.images[j - 1], self.images[j], self.index, j).get_move()
 
             total_score_one = 0
             total_score_two = 0

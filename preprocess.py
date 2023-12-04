@@ -2,18 +2,26 @@ from utility import *
 
 
 class Preprocessing:
-    def __init__(self, image):
+    def __init__(self, image, i, j):
         self.image = image
         self.imageHSV = cv.cvtColor(image, cv.COLOR_BGR2HSV)
+        self.i = i
+        self.j = j
 
     def extract_outer_square(self):
         outer_square_mask = 255 - cv.inRange(self.imageHSV, np.array([0, 0, 0]), np.array([30, 255, 255]))
+
+        # if SAVE:
+        #     cv.imwrite(f"masti/{self.i}_{str(self.j).zfill(2)}.jpg", outer_square_mask)
 
         kernel = np.ones((10, 10), np.uint8)
         outer_square_mask = cv.erode(outer_square_mask, kernel, iterations=1)
 
         kernel = np.ones((15, 15), np.uint8)
         outer_square_mask = cv.dilate(outer_square_mask, kernel, iterations=1)
+
+        if SAVE:
+            cv.imwrite(f"masti/{self.i}_{str(self.j).zfill(2)}.jpg", outer_square_mask)
 
         contours, hierarchy = cv.findContours(outer_square_mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
@@ -46,6 +54,9 @@ class Preprocessing:
 
         inner_square_mask = cv.inRange(cv.cvtColor(outer_square, cv.COLOR_BGR2HSV), np.array([40, 0, 0]),
                                        np.array([130, 255, 255]))
+
+        # if SAVE:
+        #     cv.imwrite(f"masti/{self.i}_{str(self.j).zfill(2)}.jpg", inner_square_mask)
 
         edges = cv.Canny(inner_square_mask, threshold1=50, threshold2=100)
         lines = cv.HoughLines(edges, 1, 1 * np.pi / 180, threshold=250)

@@ -5,9 +5,11 @@ from constants import *
 class Move:
     circle = cv.imread("circle.png")
 
-    def __init__(self, before, after):
+    def __init__(self, before, after, i, j):
         self.before = before
         self.after = after
+        self.i = i
+        self.j = j
 
     def extract_piece(self):
         pieces_mask_after = cv.inRange(cv.cvtColor(self.after, cv.COLOR_BGR2HSV), np.array([50, 0, 215]),
@@ -27,6 +29,10 @@ class Move:
 
         kernel = np.ones((15, 15), np.uint8)
         piece_mask = cv.erode(piece_mask, kernel, iterations=2)
+
+        if SAVE:
+            cv.imwrite(f"masti/{self.i}_{str(self.j).zfill(2)}.jpg", piece_mask)
+
 
         contours, hierarchy = cv.findContours(piece_mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
 
@@ -66,10 +72,16 @@ class Move:
         piece_h, piece_w, _ = piece.shape
         mask = np.zeros((piece_w, piece_h))
 
+        marked_piece = piece.copy()
+
         if piece_h > piece_w:
             for pt in zip(*loc[::-1]):
                 if np.sum(mask[pt[0]:pt[0] + w, pt[1]:pt[1] + h]) == 0:
                     mask[pt[0]:pt[0] + w, pt[1]:pt[1] + h] = 1
+
+                    if SAVE:
+                        marked_piece = cv.rectangle(marked_piece, (pt[0], pt[1]), (pt[0] + w, pt[1] + h), (0, 0, 255), 3)
+
                     if pt[1] + h // 2 < piece_h // 2:
                         one += 1
                     else:
@@ -78,9 +90,16 @@ class Move:
             for pt in zip(*loc[::-1]):
                 if np.sum(mask[pt[0]:pt[0] + w, pt[1]:pt[1] + h]) == 0:
                     mask[pt[0]:pt[0] + w, pt[1]:pt[1] + h] = 1
+
+                    if SAVE:
+                        marked_piece = cv.rectangle(marked_piece, (pt[0], pt[1]), (pt[0] + w, pt[1] + h), (0, 0, 255), 3)
+
                     if pt[0] + w // 2 < piece_w // 2:
                         one += 1
                     else:
                         two += 1
+
+        if SAVE:
+            cv.imwrite(f"cercuri/{self.i}_{str(self.j).zfill(2)}.jpg", marked_piece)
 
         return first_pos, second_pos, one, two
