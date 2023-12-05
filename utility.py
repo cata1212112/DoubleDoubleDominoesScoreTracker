@@ -1,13 +1,6 @@
 from imports import *
 from constants import *
 
-
-def show_image(image):
-    image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-    plt.imshow(image)
-    plt.show()
-
-
 def max_negatives_min_positives(arr):
     negatives = arr[arr < 0]
     positives = arr[arr > 0]
