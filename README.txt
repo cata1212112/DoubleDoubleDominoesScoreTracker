@@ -1,5 +1,3 @@
-[Documentatie](./DocumentatieCAVA%20(6).pdf)
-
 Python 3.10
 
 1. the libraries required to run the project including the full version of each library
