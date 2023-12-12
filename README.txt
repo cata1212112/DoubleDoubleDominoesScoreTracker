@@ -1,4 +1,4 @@
-[Documentatie](DocumentatieCAVA%20(6).pdf)
+[Documentatie](./DocumentatieCAVA%20(6).pdf)
 
 Python 3.10
 
